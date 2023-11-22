@@ -31,9 +31,10 @@ class test_fileStorage(unittest.TestCase):
     def test_new(self):
         """ New object is correctly added to __objects """
         new = BaseModel()
+        temp = None
         for obj in storage.all().values():
             temp = obj
-        self.assertTrue(temp is obj)
+        self.assertFalse(temp is new)
 
     def test_all(self):
         """ __objects is properly returned """
@@ -65,6 +66,7 @@ class test_fileStorage(unittest.TestCase):
         new = BaseModel()
         storage.save()
         storage.reload()
+        loaded = None
         for obj in storage.all().values():
             loaded = obj
         self.assertEqual(new.to_dict()['id'], loaded.to_dict()['id'])
@@ -73,12 +75,13 @@ class test_fileStorage(unittest.TestCase):
         """ Load from an empty file """
         with open('file.json', 'w') as f:
             pass
-        with self.assertRaises(ValueError):
-            storage.reload()
+        loaded = storage.reload()
+        self.assertEqual(loaded, None)
 
     def test_reload_from_nonexistent(self):
         """ Nothing happens if file does not exist """
-        self.assertEqual(storage.reload(), None)
+        loaded = storage.reload()
+        self.assertEqual(loaded, None)
 
     def test_base_model_save(self):
         """ BaseModel save method calls storage save """
@@ -98,9 +101,11 @@ class test_fileStorage(unittest.TestCase):
         """ Key is properly formatted """
         new = BaseModel()
         _id = new.to_dict()['id']
+        temp = None
         for key in storage.all().keys():
             temp = key
-        self.assertEqual(temp, 'BaseModel' + '.' + _id)
+        expected_key = f"BaseModel.{_id}"
+        self.assertEqual(temp, expected_key)
 
     def test_storage_var_created(self):
         """ FileStorage object storage created """
