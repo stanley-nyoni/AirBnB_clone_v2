@@ -119,21 +119,17 @@ class HBNBCommand(cmd.Cmd):
             arg_list = args.split()
             class_name = arg_list[0]
         except IndexError:
-            pass
-
-        if not class_name:
             print("** class name missing **")
             return
-        elif class_name not in HBNBCommand.classes:
+
+        if class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
 
-        arg_list = args.split(" ")
-
+        # Extract parameters from the command
         params = {}
-        new_instance = eval(class_name)()
-        for param in range (1, len(arg_list)):
-            key, value_str = tuple(arg_list[param].split('='))
+        for param in arg_list[1:]:
+            key, value_str = tuple(param.split('='))
             try:
                 # Handling Strings
                 if value_str.startswith('"') and value_str.endswith('"'):
@@ -147,10 +143,16 @@ class HBNBCommand(cmd.Cmd):
                 params[key] = value
             except Exception:
                 pass
+
+        # Create an instance of the specified class with the provided parameters
         new_instance = HBNBCommand.classes[class_name](**params)
+
+        # Save the object to the database
+        storage.new(new_instance)
         storage.save()
+
         print(new_instance.id)
-        storage.save()
+
 
     def help_create(self):
         """ Help information for the create method """
@@ -232,12 +234,15 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
+            objects = storage.all(HBNBCommand.classes[args])
+            for k, v in objects.items():
                 if k.split('.')[0] == args:
                     print_list.append(str(v))
         else:
-            for k, v in storage._FileStorage__objects.items():
-                print_list.append(str(v))
+            for class_name, class_obj in HBNBCommand.classes.items():
+                objects = storage.all(class_obj)
+                for k, v in objects.items():
+                    print_list.append(str(v))
 
         print(print_list)
 
