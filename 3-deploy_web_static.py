@@ -5,7 +5,7 @@ Fabric script that distributes an archive to my web servers
 """
 
 import os
-from fabric.api import put, run, env
+from fabric.api import put, run, env, local
 from datetime import datetime
 
 
