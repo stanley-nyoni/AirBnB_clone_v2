@@ -8,6 +8,7 @@ import os
 from datetime import datetime
 from fabric.api import local
 
+
 def do_pack():
     """"Generate the achieve file"""
     try:
@@ -19,5 +20,5 @@ def do_pack():
         file_size = os.path.getsize(file)
         print(f"web_static packed: {file} -> {file_size}Bytes")
         return file
-    except:
+    except Exception as e:
         return None
