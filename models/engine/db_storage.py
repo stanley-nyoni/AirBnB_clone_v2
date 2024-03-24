@@ -48,7 +48,7 @@ class DBStorage:
                 key = "{}.{}".format(type(obj).__name__, obj.id)
                 objects[key] = obj
         else:
-            
+
             for obj in self.__session.query(User):
                 key = "{}.{}".format(type(obj).__name__, obj.id)
                 objects[key] = obj
@@ -93,5 +93,3 @@ class DBStorage:
     def close(self):
         """"Close the current session"""
         self.__session.close()
-
-    
