@@ -19,6 +19,6 @@ class State(BaseModel, Base):
     @property
     def cities(self):
         """Getter attribute for FileStorage Relationship"""
-        city_instances = models.storage.all("City")
+        city_instances = models.storage.all(City)
         return [city for city in city_instances.values()
                 if city.state_id == self.id]
